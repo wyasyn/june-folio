@@ -7,7 +7,7 @@ import type { PortableTextBlock } from "next-sanity"
 import { PortableTextContent } from "@/components/portable-text"
 import { Button } from "@/components/ui/button"
 import { sanityFetch } from "@/sanity/lib/fetch"
-import { getImageUrl } from "@/sanity/lib/image-utils"
+import { getBlurDataURL, getImageUrl } from "@/sanity/lib/image-utils"
 import type { SanityImage } from "@/sanity/lib/image"
 import { PROJECT_QUERY } from "@/sanity/lib/queries"
 
@@ -33,6 +33,7 @@ export async function WorkProjectArticle({ slug }: { slug: string }) {
   if (!project) notFound()
 
   const imageUrl = getImageUrl(project.coverImage, 1200, 675)
+  const blurDataURL = getBlurDataURL(project.coverImage)
 
   return (
     <article className="container max-w-3xl pb-12 pt-12 md:pb-24 md:pt-24">
@@ -67,6 +68,7 @@ export async function WorkProjectArticle({ slug }: { slug: string }) {
           loading="eager"
           sizes="(max-width: 768px) 100vw, 768px"
           className="object-cover"
+          {...(blurDataURL ? { placeholder: "blur" as const, blurDataURL } : {})}
         />
       </div>
 

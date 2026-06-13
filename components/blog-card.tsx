@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 
-import { getImageUrl } from "@/sanity/lib/image-utils"
+import { getBlurDataURL, getImageUrl } from "@/sanity/lib/image-utils"
 import type { PostCard } from "@/sanity/lib/types"
 
 export default function BlogCard({
@@ -12,6 +12,7 @@ export default function BlogCard({
   priority?: boolean
 }) {
   const imageUrl = getImageUrl(post.coverImage, 800, 600)
+  const blurDataURL = getBlurDataURL(post.coverImage)
 
   return (
     <Link
@@ -26,6 +27,7 @@ export default function BlogCard({
           priority={priority}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-transform duration-300 group-hover:scale-105"
+          {...(blurDataURL ? { placeholder: "blur" as const, blurDataURL } : {})}
         />
       </div>
 

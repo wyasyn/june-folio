@@ -87,7 +87,7 @@ export const HOME_PAGE_QUERY = defineQuery(`
     heroName,
     heroTitle,
     heroBio,
-    heroAvatar,
+    heroAvatar{..., "lqip": asset->metadata.lqip},
     heroCtaLabel,
     heroCtaHref,
     projectsSectionTitle,
@@ -97,7 +97,7 @@ export const HOME_PAGE_QUERY = defineQuery(`
       title,
       "slug": slug.current,
       description,
-      coverImage,
+      coverImage{..., "lqip": asset->metadata.lqip},
       tags
     },
     featuredPosts[]->{
@@ -107,7 +107,7 @@ export const HOME_PAGE_QUERY = defineQuery(`
       excerpt,
       publishedAt,
       readTime,
-      coverImage
+      coverImage{..., "lqip": asset->metadata.lqip}
     }
   }
 `)
@@ -134,7 +134,7 @@ export const POSTS_QUERY = defineQuery(`
     excerpt,
     publishedAt,
     readTime,
-    coverImage
+    coverImage{..., "lqip": asset->metadata.lqip}
   }
 `)
 
@@ -146,7 +146,7 @@ export const POST_QUERY = defineQuery(`
     excerpt,
     publishedAt,
     readTime,
-    coverImage,
+    coverImage{..., "lqip": asset->metadata.lqip},
     body,
     "seo": {
       "title": coalesce(seo.title, title, ""),
@@ -170,7 +170,7 @@ export const PROJECTS_QUERY = defineQuery(`
     title,
     "slug": slug.current,
     description,
-    coverImage,
+    coverImage{..., "lqip": asset->metadata.lqip},
     tags
   }
 `)
@@ -181,7 +181,7 @@ export const PROJECT_QUERY = defineQuery(`
     title,
     "slug": slug.current,
     description,
-    coverImage,
+    coverImage{..., "lqip": asset->metadata.lqip},
     tags,
     body,
     liveUrl,

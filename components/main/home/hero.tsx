@@ -34,9 +34,11 @@ function useFadeUp() {
 export default function HeroSection({
   homePage,
   socialLinks,
+  avatarBlurDataURL,
 }: {
   homePage?: HomePage | null
   socialLinks?: SocialLink[] | null
+  avatarBlurDataURL?: string
 }) {
   const fadeUp = useFadeUp()
   const name = homePage?.heroName ?? "Yasin Walum"
@@ -59,6 +61,9 @@ export default function HeroSection({
             className="object-cover"
             priority
             sizes="96px"
+            {...(avatarBlurDataURL
+              ? { placeholder: "blur" as const, blurDataURL: avatarBlurDataURL }
+              : {})}
           />
         </motion.div>
 
