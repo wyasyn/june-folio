@@ -4,7 +4,13 @@ import Link from "next/link"
 import { getImageUrl } from "@/sanity/lib/image-utils"
 import type { ProjectCard } from "@/sanity/lib/types"
 
-export default function ProjectCard({ project }: { project: ProjectCard }) {
+export default function ProjectCard({
+  project,
+  priority = false,
+}: {
+  project: ProjectCard
+  priority?: boolean
+}) {
   const imageUrl = getImageUrl(project.coverImage, 800, 600)
 
   return (
@@ -17,6 +23,7 @@ export default function ProjectCard({ project }: { project: ProjectCard }) {
           src={imageUrl}
           alt={project.title}
           fill
+          priority={priority}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />

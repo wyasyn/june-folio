@@ -22,8 +22,12 @@ export default function ProjectsSection({
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 md:mt-12 md:gap-x-6 lg:grid-cols-3">
-        {projects.map((project) => (
-          <ProjectCard key={project._id} project={project} />
+        {projects.map((project, index) => (
+          <ProjectCard
+            key={project._id}
+            project={project}
+            priority={index === 0}
+          />
         ))}
       </div>
     </div>

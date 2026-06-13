@@ -18,6 +18,7 @@ type AnimationPreset =
   | "instagram"
   | "facebook"
   | "youtube"
+  | "resume"
 
 type PresetConfig = {
   hover: Record<string, number | number[]>
@@ -88,6 +89,15 @@ const presets: Record<AnimationPreset, PresetConfig> = {
     rest: { rotate: 0, x: 0, scale: 1 },
     loopDuration: 2.3,
   },
+  resume: {
+    hover: {
+      rotate: [0, -5, 4, -2, 0, 1.5, -1.5, 0],
+      y: [0, -5, -2, -3, -2, -1, 0],
+      scale: [1, 1.14, 1.12, 1.14, 1.12],
+    },
+    rest: { rotate: 0, y: 0, scale: 1 },
+    loopDuration: 2.5,
+  },
 }
 
 const brandColors: Record<AnimationPreset, { text: string; ripple: string }> = {
@@ -98,6 +108,7 @@ const brandColors: Record<AnimationPreset, { text: string; ripple: string }> = {
   instagram: { text: "hover:text-[#E4405F]", ripple: "bg-[#E4405F]/15" },
   facebook: { text: "hover:text-[#1877F2]", ripple: "bg-[#1877F2]/15" },
   youtube: { text: "hover:text-[#FF0000]", ripple: "bg-[#FF0000]/15" },
+  resume: { text: "hover:text-foreground", ripple: "bg-foreground/10" },
 }
 
 type AnimatedSocialIconProps = {
@@ -105,6 +116,7 @@ type AnimatedSocialIconProps = {
   label: string
   preset: AnimationPreset
   children: React.ReactNode
+  external?: boolean
 }
 
 export function AnimatedSocialIcon({
@@ -112,6 +124,7 @@ export function AnimatedSocialIcon({
   label,
   preset,
   children,
+  external = true,
 }: AnimatedSocialIconProps) {
   const [hovered, setHovered] = useState(false)
   const [isTouch, setIsTouch] = useState(false)
@@ -127,8 +140,8 @@ export function AnimatedSocialIcon({
       <TooltipTrigger asChild>
         <Link
           href={href}
-          target="_blank"
-          rel="noopener noreferrer"
+          target={external ? "_blank" : undefined}
+          rel={external ? "noopener noreferrer" : undefined}
           aria-label={label}
           className={cn(
             "group relative inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors duration-300",

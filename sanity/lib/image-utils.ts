@@ -1,8 +1,7 @@
 import { urlFor } from "./image"
 import type { SanityImage } from "./image"
 
-const FALLBACK_IMAGE =
-  "https://res.cloudinary.com/dkdteb9m5/image/upload/v1704969716/samples/bike.jpg"
+const FALLBACK_IMAGE = "/images/placeholder.png"
 
 export function getImageUrl(
   source: SanityImage | null | undefined,

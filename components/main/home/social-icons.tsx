@@ -7,6 +7,7 @@ import {
   IconBrandLinkedin,
   IconBrandX,
   IconBrandYoutube,
+  IconFileCv,
 } from "@tabler/icons-react"
 import type { ComponentType } from "react"
 
@@ -129,6 +130,14 @@ export default function SocialIcons({
             </AnimatedSocialIcon>
           )
         })}
+        <AnimatedSocialIcon
+          href="/resume"
+          label="Resume"
+          preset="resume"
+          external={false}
+        >
+          <IconFileCv strokeLinecap="round" strokeLinejoin="round" />
+        </AnimatedSocialIcon>
       </div>
     </TooltipProvider>
   )

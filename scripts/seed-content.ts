@@ -264,6 +264,123 @@ async function seed() {
     ],
   })
 
+  tx.createOrReplace({
+    _id: "resume",
+    _type: "resume",
+    fullName: "Yasin Walum",
+    jobTitle: "Software Engineer",
+    address: "Kampala, Uganda",
+    phone: "+256 700 000 000",
+    email: "ywalum@gmail.com",
+    website: "www.yasinwalum.com",
+    profile:
+      "Software engineer building fast, scalable web and mobile applications. I care about clean architecture, performance, and shipping products that feel effortless to use.",
+    education: [
+      {
+        _type: "education",
+        _key: "edu0",
+        degree: "BSc Computer Science",
+        institution: "Makerere University",
+        years: "2018 – 2022",
+      },
+    ],
+    skills: [
+      "TypeScript / JavaScript",
+      "React & Next.js",
+      "React Native & Flutter",
+      "Node.js",
+      "PostgreSQL",
+      "UI / UX Design",
+    ],
+    languages: [
+      { _type: "language", _key: "lang0", name: "English", level: "Fluent" },
+      { _type: "language", _key: "lang1", name: "Luganda", level: "Mother tongue" },
+    ],
+    workExperience: [
+      {
+        _type: "job",
+        _key: "job0",
+        jobTitle: "Frontend Engineer",
+        company: "Freelance",
+        location: "Remote",
+        period: "2022 – Present",
+        description:
+          "Designing and building production web and mobile apps for clients across several industries.",
+        bullets: [
+          "Shipped Next.js apps with a focus on Core Web Vitals and accessibility.",
+          "Built reusable component systems and design tokens.",
+        ],
+      },
+    ],
+    social: [
+      {
+        _type: "socialLink",
+        _key: "soc0",
+        platform: "github",
+        label: "GitHub",
+        url: "https://github.com/yasinwalum",
+        order: 0,
+      },
+      {
+        _type: "socialLink",
+        _key: "soc1",
+        platform: "linkedin",
+        label: "LinkedIn",
+        url: "https://www.linkedin.com/in/yasinwalum",
+        order: 1,
+      },
+      {
+        _type: "socialLink",
+        _key: "soc2",
+        platform: "x",
+        label: "X",
+        url: "https://x.com/yasinwalum",
+        order: 2,
+      },
+      {
+        _type: "socialLink",
+        _key: "soc3",
+        platform: "instagram",
+        label: "Instagram",
+        url: "https://www.instagram.com/yasinwalum",
+        order: 3,
+      },
+    ],
+    expertise: [
+      "Web Performance",
+      "Mobile Development",
+      "API Design",
+      "Problem Solving",
+      "Team Collaboration",
+    ],
+    awards: [
+      {
+        _type: "award",
+        _key: "award0",
+        title: "Hackathon Winner",
+        subtitle: "National Tech Challenge",
+        years: "2021",
+      },
+    ],
+    references: [
+      {
+        _type: "referenceItem",
+        _key: "ref0",
+        name: "Jane Doe",
+        role: "Engineering Lead",
+        phone: "+256 700 111 222",
+        email: "jane@example.com",
+      },
+    ],
+    interests: [
+      "painting",
+      "cycling",
+      "travelling",
+      "music",
+      "photography",
+    ],
+  })
+
   await tx.commit()
   console.log("Seed content published.")
 }

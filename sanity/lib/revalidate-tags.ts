@@ -6,6 +6,7 @@ type SanityWebhookPayload = {
 const TYPE_TAGS: Record<string, string[]> = {
   siteSettings: ["siteSettings"],
   homePage: ["homePage"],
+  resume: ["resume"],
   pageIntro: ["pageIntro"],
   post: ["post", "homePage"],
   project: ["project", "homePage"],

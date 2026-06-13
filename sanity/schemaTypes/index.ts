@@ -5,6 +5,7 @@ import { navItem } from "./objects/navItem"
 import { seo } from "./objects/seo"
 import { socialLink } from "./objects/socialLink"
 import { homePage } from "./singletons/homePage"
+import { resume } from "./singletons/resume"
 import { siteSettings } from "./singletons/siteSettings"
 
 export const schemaTypes = [
@@ -13,6 +14,7 @@ export const schemaTypes = [
   navItem,
   siteSettings,
   homePage,
+  resume,
   project,
   post,
   pageIntro,

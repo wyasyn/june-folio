@@ -33,6 +33,55 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
   }
 `)
 
+export const RESUME_QUERY = defineQuery(`
+  *[_id == "resume"][0]{
+    fullName,
+    jobTitle,
+    address,
+    phone,
+    email,
+    website,
+    profile,
+    education[]{
+      degree,
+      institution,
+      years
+    },
+    skills,
+    languages[]{
+      name,
+      level
+    },
+    workExperience[]{
+      jobTitle,
+      company,
+      location,
+      period,
+      description,
+      bullets
+    },
+    social[] | order(order asc){
+      platform,
+      label,
+      url,
+      order
+    },
+    expertise,
+    awards[]{
+      title,
+      subtitle,
+      years
+    },
+    references[]{
+      name,
+      role,
+      phone,
+      email
+    },
+    interests
+  }
+`)
+
 export const HOME_PAGE_QUERY = defineQuery(`
   *[_id == "homePage"][0]{
     heroName,

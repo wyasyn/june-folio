@@ -2,13 +2,14 @@ import {
   BlockContentIcon,
   CaseIcon,
   CogIcon,
+  DocumentIcon,
   DocumentTextIcon,
   HomeIcon,
 } from "@sanity/icons"
 import type { ComponentType } from "react"
 import type { StructureResolver } from "sanity/structure"
 
-const SINGLETONS = ["siteSettings", "homePage"]
+const SINGLETONS = ["siteSettings", "homePage", "resume"]
 
 function createSingleton(
   S: Parameters<StructureResolver>[0],
@@ -33,6 +34,7 @@ export const structure: StructureResolver = (S) =>
     .items([
       createSingleton(S, "siteSettings", "Site settings", CogIcon),
       createSingleton(S, "homePage", "Home page", HomeIcon),
+      createSingleton(S, "resume", "Resume", DocumentIcon),
       S.divider(),
       S.listItem()
         .title("Works")

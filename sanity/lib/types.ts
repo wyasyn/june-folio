@@ -35,6 +35,58 @@ export type SiteSettings = {
   socialLinks?: SocialLink[] | null
 }
 
+export type ResumeEducation = {
+  degree?: string | null
+  institution?: string | null
+  years?: string | null
+}
+
+export type ResumeLanguage = {
+  name?: string | null
+  level?: string | null
+}
+
+export type ResumeJob = {
+  jobTitle?: string | null
+  company?: string | null
+  location?: string | null
+  period?: string | null
+  description?: string | null
+  bullets?: string[] | null
+}
+
+export type ResumeAward = {
+  title?: string | null
+  subtitle?: string | null
+  years?: string | null
+}
+
+export type ResumeReference = {
+  name?: string | null
+  role?: string | null
+  phone?: string | null
+  email?: string | null
+}
+
+export type Resume = {
+  fullName: string
+  jobTitle: string
+  address?: string | null
+  phone?: string | null
+  email?: string | null
+  website?: string | null
+  profile?: string | null
+  education?: ResumeEducation[] | null
+  skills?: string[] | null
+  languages?: ResumeLanguage[] | null
+  workExperience?: ResumeJob[] | null
+  social?: SocialLink[] | null
+  expertise?: string[] | null
+  awards?: ResumeAward[] | null
+  references?: ResumeReference[] | null
+  interests?: string[] | null
+}
+
 export type HomePage = {
   heroName: string
   heroTitle: string
