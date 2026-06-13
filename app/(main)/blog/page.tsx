@@ -1,24 +1,42 @@
-import BlogCard from "@/components/blog-card"
-import { blogPosts } from "@/data/blogs"
+import type { Metadata } from "next"
+import { Suspense } from "react"
 
-export const metadata = {
-  title: "Blog — Yasin Walum",
-  description: "Writing about building web and mobile applications.",
+import { BlogPageIntro } from "@/components/main/blog/blog-page-intro"
+import { BlogPostsGrid } from "@/components/main/blog/blog-posts-grid"
+import { CardGridSkeleton } from "@/components/skeletons/card-grid-skeleton"
+import { PageIntroSkeleton } from "@/components/skeletons/page-intro-skeleton"
+import { buildSiteMetadata } from "@/sanity/lib/metadata"
+import { sanityFetch } from "@/sanity/lib/fetch"
+import { PAGE_INTRO_QUERY } from "@/sanity/lib/queries"
+import type { PageIntro } from "@/sanity/lib/types"
+
+export async function generateMetadata(): Promise<Metadata> {
+  const intro = await sanityFetch<PageIntro | null>({
+    query: PAGE_INTRO_QUERY,
+    params: { pageKey: "blog" },
+    tags: ["pageIntro"],
+  })
+
+  return buildSiteMetadata({
+    title: intro?.seo?.title ?? "Blog — Yasin Walum",
+    description:
+      intro?.seo?.description ??
+      "Writing about building web and mobile applications.",
+    keywords: intro?.seo?.keywords,
+    noIndex: intro?.seo?.noIndex ?? false,
+  })
 }
 
 export default function BlogPage() {
   return (
     <div className="container pb-12 pt-12 md:pb-24 md:pt-24">
-      <h1 className="text-3xl font-bold md:text-4xl">Blog</h1>
-      <p className="mt-2 max-w-prose">
-        Notes and lessons from building web and mobile applications.
-      </p>
+      <Suspense fallback={<PageIntroSkeleton />}>
+        <BlogPageIntro />
+      </Suspense>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 md:gap-x-6 mt-8 md:mt-12">
-        {blogPosts.map((post) => (
-          <BlogCard key={post.slug} post={post} />
-        ))}
-      </div>
+      <Suspense fallback={<CardGridSkeleton count={6} />}>
+        <BlogPostsGrid />
+      </Suspense>
     </div>
   )
 }

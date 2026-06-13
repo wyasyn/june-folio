@@ -1,77 +1,64 @@
-import Image from "next/image"
-import Link from "next/link"
-import { notFound } from "next/navigation"
-import { IconArrowLeft } from "@tabler/icons-react"
+import type { Metadata } from "next"
+import { Suspense } from "react"
 
-import { Button } from "@/components/ui/button"
-import { projects } from "@/data/projects"
+import { WorkProjectArticle } from "@/components/main/works/work-project-article"
+import { ArticleSkeleton } from "@/components/skeletons/article-skeleton"
+import { buildSiteMetadata } from "@/sanity/lib/metadata"
+import { sanityFetch } from "@/sanity/lib/fetch"
+import { PROJECT_QUERY, PROJECT_SLUGS_QUERY } from "@/sanity/lib/queries"
 
-export function generateStaticParams() {
-  return projects.map((project) => ({ slug: project.slug }))
+type ProjectDetail = {
+  title: string
+  description: string
+  seo?: {
+    title?: string
+    description?: string
+    keywords?: string[] | null
+    noIndex?: boolean
+  }
+}
+
+export async function generateStaticParams() {
+  const slugs = await sanityFetch<Array<{ slug: string }>>({
+    query: PROJECT_SLUGS_QUERY,
+    tags: ["project"],
+  })
+
+  return slugs.map((project) => ({ slug: project.slug }))
 }
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>
-}) {
+}): Promise<Metadata> {
   const { slug } = await params
-  const project = projects.find((p) => p.slug === slug)
+  const project = await sanityFetch<ProjectDetail | null>({
+    query: PROJECT_QUERY,
+    params: { slug },
+    tags: [`project:${slug}`, "project"],
+  })
+
   if (!project) return {}
 
-  return {
-    title: `${project.title} — Yasin Walum`,
-    description: project.description,
-  }
+  return buildSiteMetadata({
+    title: project.seo?.title || project.title,
+    description: project.seo?.description || project.description,
+    keywords: project.seo?.keywords,
+    noIndex: project.seo?.noIndex,
+  })
 }
 
-export default async function SingleWorkPage({
+export default function SingleWorkPage({
   params,
 }: {
   params: Promise<{ slug: string }>
 }) {
-  const { slug } = await params
-  const project = projects.find((p) => p.slug === slug)
-
-  if (!project) notFound()
-
   return (
-    <article className="container max-w-3xl pb-12 pt-12 md:pb-24 md:pt-24">
-      <Button asChild size="sm" variant="ghost" className="-ml-2 mb-6 gap-1.5">
-        <Link href="/works">
-          <IconArrowLeft className="size-4" />
-          All works
-        </Link>
-      </Button>
-
-      <h1 className="text-3xl font-bold md:text-4xl">{project.title}</h1>
-
-      <div className="mt-4 flex flex-wrap gap-2">
-        {project.tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-full border bg-card px-3 py-1 text-xs font-medium text-foreground shadow-sm"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <div className="relative mt-8 w-full overflow-hidden rounded-lg bg-muted aspect-video">
-        <Image
-          src={project.image}
-          alt={project.title}
-          fill
-          priority
-          loading="eager"
-          sizes="(max-width: 768px) 100vw, 768px"
-          className="object-cover"
-        />
-      </div>
-
-      <p className="mt-8 text-base leading-relaxed md:text-lg">
-        {project.description}
-      </p>
-    </article>
+    <Suspense fallback={<ArticleSkeleton />}>
+      {params.then(({ slug }) => (
+        <WorkProjectArticle slug={slug} />
+      ))}
+    </Suspense>
   )
 }

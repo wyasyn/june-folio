@@ -5,64 +5,118 @@ import {
   IconBrandGithub,
   IconBrandInstagram,
   IconBrandLinkedin,
-  IconBrandTwitter,
   IconBrandX,
   IconBrandYoutube,
 } from "@tabler/icons-react"
+import type { ComponentType } from "react"
 
 import { TooltipProvider } from "@/components/ui/tooltip"
+import type { SocialLink } from "@/sanity/lib/types"
 
 import {
   AnimatedSocialIcon,
   SocialIconSketchFilter,
 } from "./animated-social-icon"
 
-const socialLinks = [
+const defaultSocialLinks: Array<{
+  platform: string
+  label: string
+  url: string
+  icon: ComponentType<{ strokeLinecap?: "round"; strokeLinejoin?: "round" }>
+  preset: "github" | "linkedin" | "x" | "instagram" | "facebook" | "youtube"
+}> = [
   {
+    platform: "github",
     icon: IconBrandGithub,
-    href: "https://github.com/yasinwalum",
     label: "GitHub",
-    preset: "github" as const,
+    preset: "github",
+    url: "https://github.com/yasinwalum",
   },
   {
+    platform: "linkedin",
     icon: IconBrandLinkedin,
-    href: "https://www.linkedin.com/in/yasin-walum-b2b2b2b2b2b2/",
     label: "LinkedIn",
-    preset: "linkedin" as const,
+    preset: "linkedin",
+    url: "https://www.linkedin.com/in/yasin-walum-b2b2b2b2b2b2/",
   },
-
   {
+    platform: "x",
     icon: IconBrandX,
-    href: "https://x.com/yasinwalum",
     label: "X",
-    preset: "x" as const,
+    preset: "x",
+    url: "https://x.com/yasinwalum",
   },
   {
+    platform: "instagram",
     icon: IconBrandInstagram,
-    href: "https://www.instagram.com/yasinwalum",
     label: "Instagram",
-    preset: "instagram" as const,
+    preset: "instagram",
+    url: "https://www.instagram.com/yasinwalum",
   },
   {
+    platform: "facebook",
     icon: IconBrandFacebook,
-    href: "https://www.facebook.com/yasinwalum",
     label: "Facebook",
-    preset: "facebook" as const,
+    preset: "facebook",
+    url: "https://www.facebook.com/yasinwalum",
   },
   {
+    platform: "youtube",
     icon: IconBrandYoutube,
-    href: "https://www.youtube.com/yasinwalum",
     label: "YouTube",
-    preset: "youtube" as const,
+    preset: "youtube",
+    url: "https://www.youtube.com/yasinwalum",
   },
 ]
 
-export default function SocialIcons() {
+const iconByPlatform: Record<
+  string,
+  {
+    icon: ComponentType<{ strokeLinecap?: "round"; strokeLinejoin?: "round" }>
+    preset: "github" | "linkedin" | "x" | "instagram" | "facebook" | "youtube"
+  }
+> = {
+  github: { icon: IconBrandGithub, preset: "github" },
+  linkedin: { icon: IconBrandLinkedin, preset: "linkedin" },
+  x: { icon: IconBrandX, preset: "x" },
+  instagram: { icon: IconBrandInstagram, preset: "instagram" },
+  facebook: { icon: IconBrandFacebook, preset: "facebook" },
+  youtube: { icon: IconBrandYoutube, preset: "youtube" },
+}
+
+export default function SocialIcons({
+  socialLinks,
+}: {
+  socialLinks?: SocialLink[] | null
+}) {
+  const links =
+    socialLinks?.length ?
+      socialLinks
+        .filter((link) => link.url && link.platform)
+        .map((link) => {
+          const iconConfig = iconByPlatform[link.platform]
+          if (!iconConfig) return null
+          return {
+            icon: iconConfig.icon,
+            href: link.url,
+            label: link.label,
+            preset: iconConfig.preset,
+          }
+        })
+        .filter(Boolean)
+    : defaultSocialLinks.map(({ icon, label, url, preset }) => ({
+        icon,
+        href: url,
+        label,
+        preset,
+      }))
+
   return (
     <TooltipProvider>
       <div className="relative flex flex-wrap items-center gap-1 sm:gap-1.5">
         <SocialIconSketchFilter />
-        {socialLinks.map((link) => {
+        {links.map((link) => {
+          if (!link) return null
           const Icon = link.icon
           return (
             <AnimatedSocialIcon

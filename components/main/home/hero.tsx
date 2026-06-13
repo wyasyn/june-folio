@@ -6,6 +6,9 @@ import Image from "next/image"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
+import { HeroBio } from "@/components/main/home/hero-bio"
+import { getImageUrl } from "@/sanity/lib/image-utils"
+import type { HomePage, SocialLink } from "@/sanity/lib/types"
 
 import SocialIcons from "./social-icons"
 
@@ -28,41 +31,19 @@ function useFadeUp() {
   })
 }
 
-function SketchUnderline({
-  children,
-  delay,
+export default function HeroSection({
+  homePage,
+  socialLinks,
 }: {
-  children: React.ReactNode
-  delay: number
+  homePage?: HomePage | null
+  socialLinks?: SocialLink[] | null
 }) {
-  const reduceMotion = useReducedMotion()
-
-  return (
-    <span className="relative inline-block font-bold text-foreground">
-      {children}
-      <svg
-        aria-hidden
-        viewBox="0 0 100 10"
-        preserveAspectRatio="none"
-        className="absolute -bottom-1 left-0 h-2 w-full overflow-visible"
-      >
-        <motion.path
-          d="M2 7 Q 30 3, 50 6 T 98 5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2.5}
-          strokeLinecap="round"
-          initial={reduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ delay, duration: 0.5, ease: "easeOut" }}
-        />
-      </svg>
-    </span>
-  )
-}
-
-export default function HeroSection() {
   const fadeUp = useFadeUp()
+  const name = homePage?.heroName ?? "Yasin Walum"
+  const title = homePage?.heroTitle ?? "Software Engineer"
+  const ctaLabel = homePage?.heroCtaLabel ?? "My Works"
+  const ctaHref = homePage?.heroCtaHref ?? "/works"
+  const avatarUrl = getImageUrl(homePage?.heroAvatar, 192, 192)
 
   return (
     <div>
@@ -72,8 +53,8 @@ export default function HeroSection() {
           className="relative size-20 shrink-0 overflow-hidden rounded-full bg-muted sm:size-24"
         >
           <Image
-            src="https://res.cloudinary.com/dkdteb9m5/image/upload/v1731179025/personal%20finance/lj5hjqhmvaeqdsrfcwky.jpg"
-            alt="June"
+            src={avatarUrl}
+            alt={name}
             fill
             className="object-cover"
             priority
@@ -86,13 +67,13 @@ export default function HeroSection() {
             {...fadeUp(0.08)}
             className="text-2xl font-semibold tracking-tight sm:text-3xl"
           >
-            Yasin Walum
+            {name}
           </motion.h1>
           <motion.p
             {...fadeUp(0.16)}
             className="text-sm text-muted-foreground sm:text-base"
           >
-            Software Engineer
+            {title}
           </motion.p>
           <motion.div {...fadeUp(0.24)} className="flex items-center gap-2">
             <Button
@@ -101,8 +82,8 @@ export default function HeroSection() {
               variant="secondary"
               className="group items-center gap-2"
             >
-              <Link href="/works">
-                <span>My Works</span>
+              <Link href={ctaHref}>
+                <span>{ctaLabel}</span>
                 <IconExternalLink className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
             </Button>
@@ -114,15 +95,11 @@ export default function HeroSection() {
         {...fadeUp(0.32)}
         className="mt-8 max-w-prose text-muted-foreground md:mt-12"
       >
-        <SketchUnderline delay={0.9}>Yasin</SketchUnderline> is Uganda based
-        software engineer with a passion for building{" "}
-        <SketchUnderline delay={1.1}>web</SketchUnderline> &{" "}
-        <SketchUnderline delay={1.3}>mobile</SketchUnderline> applications that
-        are fast, scalable, and easy to use.
+        <HeroBio value={homePage?.heroBio} />
       </motion.p>
 
       <motion.div {...fadeUp(0.4)} className="mt-8 md:mt-12">
-        <SocialIcons />
+        <SocialIcons socialLinks={socialLinks} />
       </motion.div>
     </div>
   )

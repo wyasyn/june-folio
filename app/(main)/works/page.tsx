@@ -1,24 +1,40 @@
-import ProjectCard from "@/components/project-card"
-import { projects } from "@/data/projects"
+import type { Metadata } from "next"
+import { Suspense } from "react"
 
-export const metadata = {
-  title: "Works — Yasin Walum",
-  description: "Projects I have designed and built.",
+import { WorksPageIntro } from "@/components/main/works/works-page-intro"
+import { WorksProjectsGrid } from "@/components/main/works/works-projects-grid"
+import { CardGridSkeleton } from "@/components/skeletons/card-grid-skeleton"
+import { PageIntroSkeleton } from "@/components/skeletons/page-intro-skeleton"
+import { buildSiteMetadata } from "@/sanity/lib/metadata"
+import { sanityFetch } from "@/sanity/lib/fetch"
+import { PAGE_INTRO_QUERY } from "@/sanity/lib/queries"
+import type { PageIntro } from "@/sanity/lib/types"
+
+export async function generateMetadata(): Promise<Metadata> {
+  const intro = await sanityFetch<PageIntro | null>({
+    query: PAGE_INTRO_QUERY,
+    params: { pageKey: "works" },
+    tags: ["pageIntro"],
+  })
+
+  return buildSiteMetadata({
+    title: intro?.seo?.title ?? "Works — Yasin Walum",
+    description: intro?.seo?.description ?? "Projects I have designed and built.",
+    keywords: intro?.seo?.keywords,
+    noIndex: intro?.seo?.noIndex ?? false,
+  })
 }
 
 export default function WorksPage() {
   return (
     <div className="container pb-12 pt-12 md:pb-24 md:pt-24">
-      <h1 className="text-3xl font-bold md:text-4xl">Works</h1>
-      <p className="mt-2 max-w-prose">
-        A selection of web and mobile projects I have designed and built.
-      </p>
+      <Suspense fallback={<PageIntroSkeleton />}>
+        <WorksPageIntro />
+      </Suspense>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 md:gap-x-6 mt-8 md:mt-12">
-        {projects.map((project) => (
-          <ProjectCard key={project.slug} project={project} />
-        ))}
-      </div>
+      <Suspense fallback={<CardGridSkeleton count={6} />}>
+        <WorksProjectsGrid />
+      </Suspense>
     </div>
   )
 }

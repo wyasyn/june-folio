@@ -4,14 +4,15 @@ import Link from "next/link"
 import { IconArrowUp } from "@tabler/icons-react"
 import { motion, useReducedMotion } from "motion/react"
 
-const footerLinks = [
+import type { NavItem } from "@/sanity/lib/types"
+
+const defaultFooterLinks = [
   { label: "Home", href: "/" },
   { label: "Works", href: "/works" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ]
 
-// Hand-drawn squiggle that draws itself in when the footer scrolls into view.
 function SketchDivider() {
   const reduceMotion = useReducedMotion()
 
@@ -37,8 +38,6 @@ function SketchDivider() {
   )
 }
 
-// Nav link with a sketchy underline that draws in on hover (pure CSS via
-// stroke-dashoffset, so it stays cheap).
 function FooterLink({ label, href }: { label: string; href: string }) {
   return (
     <Link
@@ -83,9 +82,23 @@ function BackToTop() {
   )
 }
 
-export default function Footer() {
+export default function Footer({
+  footerLinks,
+  footerCopyright,
+  authorName,
+}: {
+  footerLinks?: NavItem[] | null
+  footerCopyright?: string | null
+  authorName?: string | null
+}) {
   const reduceMotion = useReducedMotion()
   const year = new Date().getFullYear()
+  const links =
+    footerLinks?.map((link) => ({ label: link.label, href: link.href })) ??
+    defaultFooterLinks
+  const copyrightTemplate =
+    footerCopyright ?? `© {year} ${authorName ?? "Yasin Walum"}.`
+  const copyright = copyrightTemplate.replace("{year}", String(year))
 
   const fadeUp = (delay: number) => ({
     initial: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
@@ -100,7 +113,7 @@ export default function Footer() {
 
       <div className="mt-8 flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
         <motion.p {...fadeUp(0.1)} className="text-sm text-muted-foreground">
-          © {year} Yasin Walum.
+          {copyright}
         </motion.p>
 
         <motion.nav
@@ -108,7 +121,7 @@ export default function Footer() {
           aria-label="Footer"
           className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
         >
-          {footerLinks.map((link) => (
+          {links.map((link) => (
             <FooterLink key={link.href} {...link} />
           ))}
         </motion.nav>
