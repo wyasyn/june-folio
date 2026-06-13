@@ -23,7 +23,7 @@ export default function NotFound() {
         <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
           Page not found
         </h1>
-        <p className="mt-4 max-w-prose text-muted-foreground">
+        <p className="mt-4 max-w-md text-muted-foreground">
           The page you&apos;re looking for doesn&apos;t exist or may have been
           moved. Let&apos;s get you back on track.
         </p>
