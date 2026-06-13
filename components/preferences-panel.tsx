@@ -86,22 +86,37 @@ export default function PreferencesPanel() {
         value={<MiniSwitch on={isDark} />}
         onClick={() => setTheme(isDark ? "light" : "dark")}
       />
-      <div className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-accent">
+      <div className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm">
         <span className="text-primary">
           <IconTextSize className="h-5 w-5" />
         </span>
         <span className="flex-1 text-foreground">Font size</span>
-        <input
-          type="range"
-          min={0}
-          max={fontSizeOrder.length - 1}
-          step={1}
-          value={fontSizeOrder.indexOf(fontSize)}
-          onChange={(e) => setFontSize(fontSizeOrder[Number(e.target.value)])}
-          aria-label={`Font size: ${fontSizeLabels[fontSize]}`}
-          title={fontSizeLabels[fontSize]}
-          className="w-20 accent-primary"
-        />
+        <div
+          role="group"
+          aria-label="Font size"
+          className="flex items-center gap-0.5 rounded-lg bg-muted/50 p-0.5"
+        >
+          {fontSizeOrder.map((size) => (
+            <button
+              key={size}
+              onClick={() => setFontSize(size)}
+              aria-pressed={fontSize === size}
+              aria-label={`${fontSizeLabels[size]} font size`}
+              title={fontSizeLabels[size]}
+              className={cn(
+                "flex h-6 w-6 items-center justify-center rounded-md leading-none transition-colors",
+                size === "small" && "text-[10px]",
+                size === "default" && "text-xs",
+                size === "large" && "text-sm",
+                fontSize === size
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
+              )}
+            >
+              A
+            </button>
+          ))}
+        </div>
       </div>
       <PanelRow
         icon={<IconContrast className="h-5 w-5" />}

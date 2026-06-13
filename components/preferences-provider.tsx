@@ -1,7 +1,14 @@
 "use client";
 
 import { MotionConfig } from "motion/react";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 export type FontSize = "small" | "default" | "large";
 
@@ -25,38 +32,25 @@ export function PreferencesProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [reducedMotion, setReducedMotionState] = useState(false);
-  const [fontSize, setFontSizeState] = useState<FontSize>("default");
-  const [highContrast, setHighContrastState] = useState(false);
-
-  useEffect(() => {
-    const storedMotion = localStorage.getItem(MOTION_KEY);
-    if (storedMotion !== null) {
-      setReducedMotionState(storedMotion === "true");
-    } else {
-      setReducedMotionState(
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-      );
-    }
-
-    const storedFontSize = localStorage.getItem(FONT_SIZE_KEY);
-    if (
-      storedFontSize === "small" ||
-      storedFontSize === "default" ||
-      storedFontSize === "large"
-    ) {
-      setFontSizeState(storedFontSize);
-    }
-
-    const storedContrast = localStorage.getItem(CONTRAST_KEY);
-    if (storedContrast !== null) {
-      setHighContrastState(storedContrast === "true");
-    } else {
-      setHighContrastState(
-        window.matchMedia("(prefers-contrast: more)").matches,
-      );
-    }
-  }, []);
+  // Initialize from localStorage on the client so the first render already
+  // matches the attributes set by the pre-paint script in the root layout.
+  const [reducedMotion, setReducedMotionState] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const stored = localStorage.getItem(MOTION_KEY);
+    if (stored !== null) return stored === "true";
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
+  const [fontSize, setFontSizeState] = useState<FontSize>(() => {
+    if (typeof window === "undefined") return "default";
+    const stored = localStorage.getItem(FONT_SIZE_KEY);
+    return stored === "small" || stored === "large" ? stored : "default";
+  });
+  const [highContrast, setHighContrastState] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const stored = localStorage.getItem(CONTRAST_KEY);
+    if (stored !== null) return stored === "true";
+    return window.matchMedia("(prefers-contrast: more)").matches;
+  });
 
   useEffect(() => {
     const html = document.documentElement;
@@ -69,32 +63,42 @@ export function PreferencesProvider({
     }
   }, [reducedMotion, highContrast, fontSize]);
 
-  const setReducedMotion = (value: boolean) => {
+  const setReducedMotion = useCallback((value: boolean) => {
     setReducedMotionState(value);
     localStorage.setItem(MOTION_KEY, String(value));
-  };
+  }, []);
 
-  const setFontSize = (value: FontSize) => {
+  const setFontSize = useCallback((value: FontSize) => {
     setFontSizeState(value);
     localStorage.setItem(FONT_SIZE_KEY, value);
-  };
+  }, []);
 
-  const setHighContrast = (value: boolean) => {
+  const setHighContrast = useCallback((value: boolean) => {
     setHighContrastState(value);
     localStorage.setItem(CONTRAST_KEY, String(value));
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      reducedMotion,
+      setReducedMotion,
+      fontSize,
+      setFontSize,
+      highContrast,
+      setHighContrast,
+    }),
+    [
+      reducedMotion,
+      setReducedMotion,
+      fontSize,
+      setFontSize,
+      highContrast,
+      setHighContrast,
+    ],
+  );
 
   return (
-    <PreferencesContext.Provider
-      value={{
-        reducedMotion,
-        setReducedMotion,
-        fontSize,
-        setFontSize,
-        highContrast,
-        setHighContrast,
-      }}
-    >
+    <PreferencesContext.Provider value={value}>
       <MotionConfig reducedMotion={reducedMotion ? "always" : "user"}>
         {children}
       </MotionConfig>

@@ -24,7 +24,7 @@ import {
 } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HoverCard, Popover } from "radix-ui";
+import { Popover } from "radix-ui";
 
 import { useRef, useState } from "react";
 
@@ -42,6 +42,11 @@ const isActiveRoute = (pathname: string, href: string) =>
 
 const popoverAnimation =
   "z-50 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95";
+
+// Same springy entrance as the hero social-link tooltips. Covers both
+// delayed-open (this dock's 100ms delay) and instant-open states.
+const tooltipAnimation =
+  "duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-90 data-[state=delayed-open]:slide-in-from-bottom-2 data-[state=instant-open]:animate-in data-[state=instant-open]:fade-in-0 data-[state=instant-open]:zoom-in-90 data-[state=instant-open]:slide-in-from-bottom-2 motion-reduce:animate-none";
 
 export const FloatingDock = ({
   items,
@@ -70,7 +75,7 @@ const FloatingDockMobile = ({
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   return (
-    <div className={cn("relative block md:hidden", className)}>
+    <div data-font-scale-exempt className={cn("relative block md:hidden", className)}>
       <AnimatePresence>
         {open && (
           <motion.div
@@ -120,6 +125,7 @@ const FloatingDockMobile = ({
                       <Popover.Content
                         side="left"
                         sideOffset={12}
+                        data-font-scale-exempt
                         className={popoverAnimation}
                       >
                         {item.content}
@@ -156,6 +162,7 @@ const FloatingDockDesktop = ({
   return (
     <TooltipProvider delayDuration={100}>
       <motion.div
+        data-font-scale-exempt
         onMouseMove={(e) => !reducedMotion && mouseX.set(e.pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         className={cn(
@@ -163,6 +170,7 @@ const FloatingDockDesktop = ({
           className,
         )}
       >
+        <span aria-hidden className="dock-border-glow" />
         {items.map((item) => (
           <IconContainer
             mouseX={mouseX}
@@ -249,21 +257,29 @@ function IconContainer({
 
   if (content) {
     return (
-      <HoverCard.Root openDelay={100} closeDelay={200}>
-        <HoverCard.Trigger asChild>
-          <button aria-label={title}>{dockIcon}</button>
-        </HoverCard.Trigger>
-        <HoverCard.Portal>
-          <HoverCard.Content
+      <Popover.Root>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Popover.Trigger asChild>
+              <button aria-label={title}>{dockIcon}</button>
+            </Popover.Trigger>
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={8} className={tooltipAnimation}>
+            {title}
+          </TooltipContent>
+        </Tooltip>
+        <Popover.Portal>
+          <Popover.Content
             side="top"
             sideOffset={12}
+            data-font-scale-exempt
             className={popoverAnimation}
           >
             {content}
-            <HoverCard.Arrow className="z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px] border-r border-b border-border bg-popover/80 fill-popover/80 backdrop-blur-md" />
-          </HoverCard.Content>
-        </HoverCard.Portal>
-      </HoverCard.Root>
+            <Popover.Arrow className="z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px] border-r border-b border-border bg-popover/80 fill-popover/80 backdrop-blur-md" />
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
     );
   }
 
@@ -272,7 +288,7 @@ function IconContainer({
       <TooltipTrigger asChild>
         <Link href={href!}>{dockIcon}</Link>
       </TooltipTrigger>
-      <TooltipContent side="top" sideOffset={8}>
+      <TooltipContent side="top" sideOffset={8} className={tooltipAnimation}>
         {title}
       </TooltipContent>
     </Tooltip>

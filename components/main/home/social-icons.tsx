@@ -10,6 +10,8 @@ import {
   IconBrandYoutube,
 } from "@tabler/icons-react"
 
+import { TooltipProvider } from "@/components/ui/tooltip"
+
 import {
   AnimatedSocialIcon,
   SocialIconSketchFilter,
@@ -57,21 +59,23 @@ const socialLinks = [
 
 export default function SocialIcons() {
   return (
-    <div className="relative flex flex-wrap items-center gap-1 sm:gap-1.5">
-      <SocialIconSketchFilter />
-      {socialLinks.map((link) => {
-        const Icon = link.icon
-        return (
-          <AnimatedSocialIcon
-            key={link.href}
-            href={link.href}
-            label={link.label}
-            preset={link.preset}
-          >
-            <Icon strokeLinecap="round" strokeLinejoin="round" />
-          </AnimatedSocialIcon>
-        )
-      })}
-    </div>
+    <TooltipProvider>
+      <div className="relative flex flex-wrap items-center gap-1 sm:gap-1.5">
+        <SocialIconSketchFilter />
+        {socialLinks.map((link) => {
+          const Icon = link.icon
+          return (
+            <AnimatedSocialIcon
+              key={link.href}
+              href={link.href}
+              label={link.label}
+              preset={link.preset}
+            >
+              <Icon strokeLinecap="round" strokeLinejoin="round" />
+            </AnimatedSocialIcon>
+          )
+        })}
+      </div>
+    </TooltipProvider>
   )
 }

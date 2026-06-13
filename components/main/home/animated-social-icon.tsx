@@ -1,9 +1,14 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { motion } from "motion/react"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { motion, useReducedMotion } from "motion/react"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 type AnimationPreset =
   | "github"
@@ -85,14 +90,14 @@ const presets: Record<AnimationPreset, PresetConfig> = {
   },
 }
 
-const brandColors: Record<AnimationPreset, string> = {
-  github: "group-hover:text-foreground",
-  linkedin: "group-hover:text-[#0A66C2]",
-  twitter: "group-hover:text-[#1DA1F2]",
-  x: "group-hover:text-foreground",
-  instagram: "group-hover:text-[#E4405F]",
-  facebook: "group-hover:text-[#1877F2]",
-  youtube: "group-hover:text-[#FF0000]",
+const brandColors: Record<AnimationPreset, { text: string; ripple: string }> = {
+  github: { text: "hover:text-foreground", ripple: "bg-foreground/10" },
+  linkedin: { text: "hover:text-[#0A66C2]", ripple: "bg-[#0A66C2]/15" },
+  twitter: { text: "hover:text-[#1DA1F2]", ripple: "bg-[#1DA1F2]/15" },
+  x: { text: "hover:text-foreground", ripple: "bg-foreground/10" },
+  instagram: { text: "hover:text-[#E4405F]", ripple: "bg-[#E4405F]/15" },
+  facebook: { text: "hover:text-[#1877F2]", ripple: "bg-[#1877F2]/15" },
+  youtube: { text: "hover:text-[#FF0000]", ripple: "bg-[#FF0000]/15" },
 }
 
 type AnimatedSocialIconProps = {
@@ -109,46 +114,80 @@ export function AnimatedSocialIcon({
   children,
 }: AnimatedSocialIconProps) {
   const [hovered, setHovered] = useState(false)
+  const [isTouch, setIsTouch] = useState(false)
+  const reduceMotion = useReducedMotion()
   const config = presets[preset]
 
+  useEffect(() => {
+    setIsTouch(window.matchMedia("(hover: none)").matches)
+  }, [])
+
   return (
-    <Link
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      className={cn(
-        "group relative inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors duration-300",
-        "hover:bg-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-        brandColors[preset],
-      )}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocus={() => setHovered(true)}
-      onBlur={() => setHovered(false)}
-    >
-      <motion.span
-        className="relative flex items-center justify-center [&_svg]:size-6 [&_svg]:stroke-[1.75] [&_svg]:transition-[stroke-width,filter] [&_svg]:duration-300 group-hover:[&_svg]:stroke-[2.25] group-hover:[&_svg]:filter-[url(#social-icon-sketch)]"
-        initial={false}
-        animate={hovered ? config.hover : config.rest}
-        transition={
-          hovered
-            ? {
-                duration: config.loopDuration,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }
-            : {
-                type: "spring",
-                stiffness: 420,
-                damping: 18,
-                mass: 0.55,
-              }
-        }
+    <Tooltip open={hovered && !isTouch}>
+      <TooltipTrigger asChild>
+        <Link
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={label}
+          className={cn(
+            "group relative inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors duration-300",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            brandColors[preset].text,
+          )}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onFocus={() => setHovered(true)}
+          onBlur={() => setHovered(false)}
+        >
+          <span
+            aria-hidden
+            className={cn(
+              "absolute inset-0 scale-50 rounded-full opacity-0 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+              "group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100",
+              "motion-reduce:scale-100",
+              brandColors[preset].ripple,
+            )}
+          />
+          <motion.span
+            className="relative flex items-center justify-center [&_svg]:size-6 [&_svg]:stroke-[1.75] [&_svg]:transition-[stroke-width,filter] [&_svg]:duration-300 group-hover:[&_svg]:stroke-[2.25] motion-safe:group-hover:[&_svg]:filter-[url(#social-icon-sketch)]"
+            initial={false}
+            animate={
+              hovered
+                ? reduceMotion
+                  ? { scale: 1.1 }
+                  : config.hover
+                : config.rest
+            }
+            transition={
+              hovered
+                ? reduceMotion
+                  ? { duration: 0.2 }
+                  : {
+                      duration: config.loopDuration * 0.45,
+                      ease: "easeInOut",
+                    }
+                : {
+                    type: "spring",
+                    stiffness: 420,
+                    damping: 18,
+                    mass: 0.55,
+                  }
+            }
+          >
+            {children}
+          </motion.span>
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent
+        side="top"
+        sideOffset={6}
+        aria-hidden
+        className="duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] data-[state=instant-open]:animate-in data-[state=instant-open]:fade-in-0 data-[state=instant-open]:zoom-in-90 data-[state=instant-open]:slide-in-from-bottom-2 motion-reduce:animate-none"
       >
-        {children}
-      </motion.span>
-    </Link>
+        {label}
+      </TooltipContent>
+    </Tooltip>
   )
 }
 

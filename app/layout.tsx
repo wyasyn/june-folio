@@ -26,7 +26,12 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("antialiased", fontMono.variable, "font-sans", inter.variable, loraHeading.variable)}
     >
-      <body>
+      <body className="overflow-x-clip">
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var d=document.documentElement;var f=localStorage.getItem("preferences:font-size");if(f==="small"||f==="large")d.setAttribute("data-font-size",f);var c=localStorage.getItem("preferences:high-contrast");if(c===null?window.matchMedia("(prefers-contrast: more)").matches:c==="true")d.setAttribute("data-high-contrast","");var m=localStorage.getItem("preferences:reduce-motion");if(m===null?window.matchMedia("(prefers-reduced-motion: reduce)").matches:m==="true")d.setAttribute("data-reduce-motion","")}catch(e){}})()`,
+          }}
+        />
         <ThemeProvider>
           <PreferencesProvider>
             <TooltipProvider>{children}</TooltipProvider>
