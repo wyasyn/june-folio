@@ -141,6 +141,7 @@ export const POSTS_QUERY = defineQuery(`
 export const POST_QUERY = defineQuery(`
   *[_type == "post" && slug.current == $slug][0]{
     _id,
+    _updatedAt,
     title,
     "slug": slug.current,
     excerpt,
@@ -178,6 +179,7 @@ export const PROJECTS_QUERY = defineQuery(`
 export const PROJECT_QUERY = defineQuery(`
   *[_type == "project" && slug.current == $slug][0]{
     _id,
+    _updatedAt,
     title,
     "slug": slug.current,
     description,

@@ -1,18 +1,23 @@
 import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
-import { IconArrowLeft, IconExternalLink } from "@tabler/icons-react"
+import { IconExternalLink } from "@tabler/icons-react"
 import type { PortableTextBlock } from "next-sanity"
 
+import { BackButton } from "@/components/main/back-button"
+import { JsonLd } from "@/components/json-ld"
 import { PortableTextContent } from "@/components/portable-text"
 import { Button } from "@/components/ui/button"
 import { sanityFetch } from "@/sanity/lib/fetch"
 import { getBlurDataURL, getImageUrl } from "@/sanity/lib/image-utils"
 import type { SanityImage } from "@/sanity/lib/image"
-import { PROJECT_QUERY } from "@/sanity/lib/queries"
+import { buildProjectJsonLd } from "@/sanity/lib/json-ld"
+import { getSiteSettings } from "@/sanity/lib/metadata"
+import { PROJECT_QUERY, RESUME_QUERY } from "@/sanity/lib/queries"
+import type { Resume } from "@/sanity/lib/types"
 
 type ProjectDetail = {
   _id: string
+  _updatedAt?: string | null
   title: string
   slug: string
   description: string
@@ -24,11 +29,15 @@ type ProjectDetail = {
 }
 
 export async function WorkProjectArticle({ slug }: { slug: string }) {
-  const project = await sanityFetch<ProjectDetail | null>({
-    query: PROJECT_QUERY,
-    params: { slug },
-    tags: [`project:${slug}`, "project"],
-  })
+  const [project, settings, resume] = await Promise.all([
+    sanityFetch<ProjectDetail | null>({
+      query: PROJECT_QUERY,
+      params: { slug },
+      tags: [`project:${slug}`, "project"],
+    }),
+    getSiteSettings(),
+    sanityFetch<Resume | null>({ query: RESUME_QUERY, tags: ["resume"] }),
+  ])
 
   if (!project) notFound()
 
@@ -37,12 +46,8 @@ export async function WorkProjectArticle({ slug }: { slug: string }) {
 
   return (
     <article className="container max-w-3xl pb-12 pt-12 md:pb-24 md:pt-24">
-      <Button asChild size="sm" variant="ghost" className="-ml-2 mb-6 gap-1.5">
-        <Link href="/works">
-          <IconArrowLeft className="size-4" />
-          All works
-        </Link>
-      </Button>
+      <JsonLd data={buildProjectJsonLd(project, settings, resume)} />
+      <BackButton fallbackHref="/works" />
 
       <h1 className="text-3xl font-bold md:text-4xl">{project.title}</h1>
 

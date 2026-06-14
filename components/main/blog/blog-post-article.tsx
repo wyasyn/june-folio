@@ -1,18 +1,21 @@
 import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
-import { IconArrowLeft } from "@tabler/icons-react"
 import type { PortableTextBlock } from "next-sanity"
 
+import { BackButton } from "@/components/main/back-button"
+import { JsonLd } from "@/components/json-ld"
 import { PortableTextContent } from "@/components/portable-text"
-import { Button } from "@/components/ui/button"
 import { sanityFetch } from "@/sanity/lib/fetch"
 import { getBlurDataURL, getImageUrl } from "@/sanity/lib/image-utils"
 import type { SanityImage } from "@/sanity/lib/image"
-import { POST_QUERY } from "@/sanity/lib/queries"
+import { buildPostJsonLd } from "@/sanity/lib/json-ld"
+import { getSiteSettings } from "@/sanity/lib/metadata"
+import { POST_QUERY, RESUME_QUERY } from "@/sanity/lib/queries"
+import type { Resume } from "@/sanity/lib/types"
 
 type PostDetail = {
   _id: string
+  _updatedAt?: string | null
   title: string
   slug: string
   excerpt: string
@@ -23,11 +26,15 @@ type PostDetail = {
 }
 
 export async function BlogPostArticle({ slug }: { slug: string }) {
-  const post = await sanityFetch<PostDetail | null>({
-    query: POST_QUERY,
-    params: { slug },
-    tags: [`post:${slug}`, "post"],
-  })
+  const [post, settings, resume] = await Promise.all([
+    sanityFetch<PostDetail | null>({
+      query: POST_QUERY,
+      params: { slug },
+      tags: [`post:${slug}`, "post"],
+    }),
+    getSiteSettings(),
+    sanityFetch<Resume | null>({ query: RESUME_QUERY, tags: ["resume"] }),
+  ])
 
   if (!post) notFound()
 
@@ -36,12 +43,8 @@ export async function BlogPostArticle({ slug }: { slug: string }) {
 
   return (
     <article className="container max-w-3xl pb-12 pt-12 md:pb-24 md:pt-24">
-      <Button asChild size="sm" variant="ghost" className="-ml-2 mb-6 gap-1.5">
-        <Link href="/blog">
-          <IconArrowLeft className="size-4" />
-          All posts
-        </Link>
-      </Button>
+      <JsonLd data={buildPostJsonLd(post, settings, resume)} />
+      <BackButton fallbackHref="/blog" />
 
       <div className="flex items-center gap-2 text-sm">
         <time dateTime={post.publishedAt}>
