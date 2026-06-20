@@ -3,6 +3,8 @@
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
 
+import { siteThemeColors } from "@/lib/site-theme"
+
 function ThemeProvider({
   children,
   ...props
@@ -16,6 +18,7 @@ function ThemeProvider({
       {...props}
     >
       <ThemeHotkey />
+      <ThemeColorSync />
       {children}
     </NextThemesProvider>
   )
@@ -32,6 +35,36 @@ function isTypingTarget(target: EventTarget | null) {
     target.tagName === "TEXTAREA" ||
     target.tagName === "SELECT"
   )
+}
+
+function ThemeColorSync() {
+  const { resolvedTheme } = useTheme()
+
+  React.useEffect(() => {
+    function updateThemeColor() {
+      const mode = document.documentElement.classList.contains("dark")
+        ? "dark"
+        : "light"
+      const color = siteThemeColors[mode].theme
+
+      document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+        meta.setAttribute("content", color)
+      })
+    }
+
+    updateThemeColor()
+
+    const observer = new MutationObserver(updateThemeColor)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    })
+    observer.observe(document.head, { childList: true, subtree: true })
+
+    return () => observer.disconnect()
+  }, [resolvedTheme])
+
+  return null
 }
 
 function ThemeHotkey() {

@@ -1,12 +1,17 @@
 import { Suspense } from "react"
+import dynamic from "next/dynamic"
 
-import Illustration from "@/components/main/home/illustration"
 import { HomeFeaturedPosts } from "@/components/main/home/home-featured-posts"
 import { HomeFeaturedProjects } from "@/components/main/home/home-featured-projects"
 import { HomeHeroSection } from "@/components/main/home/home-hero-section"
 import { PersonJsonLd } from "@/components/main/home/person-json-ld"
 import { HeroSkeleton } from "@/components/skeletons/hero-skeleton"
 import { SectionSkeleton } from "@/components/skeletons/section-skeleton"
+
+const Illustration = dynamic(
+  () => import("@/components/main/home/illustration"),
+  { ssr: true },
+)
 
 export default function HomePage() {
   return (

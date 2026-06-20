@@ -1,9 +1,12 @@
 import type { NextConfig } from "next"
 
+import { staticSecurityHeaders } from "@/lib/security-headers"
+
 const nextConfig: NextConfig = {
   cacheComponents: true,
   serverExternalPackages: ["@react-pdf/renderer"],
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
@@ -11,6 +14,14 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
+  },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [...staticSecurityHeaders],
+      },
+    ]
   },
 }
 

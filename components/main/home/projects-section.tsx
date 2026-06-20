@@ -17,7 +17,9 @@ export default function ProjectsSection({
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{title}</h2>
         <Button asChild variant="link">
-          <Link href="/works">View All</Link>
+          <Link href="/works" aria-label="View all projects">
+            View All
+          </Link>
         </Button>
       </div>
 

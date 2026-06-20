@@ -60,6 +60,7 @@ export default function HeroSection({
             fill
             className="object-cover"
             priority
+            fetchPriority="high"
             sizes="96px"
             {...(avatarBlurDataURL
               ? { placeholder: "blur" as const, blurDataURL: avatarBlurDataURL }

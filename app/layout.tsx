@@ -1,12 +1,15 @@
 import type { Metadata } from "next"
 import { Geist_Mono, Inter, Lora } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { Suspense } from "react"
 
 import "./globals.css"
+import { PreferencesBootstrap } from "@/components/preferences-bootstrap"
 import { ThemeProvider } from "@/components/theme-provider"
 import { PreferencesProvider } from "@/components/preferences-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import { siteThemeColors } from "@/lib/site-theme"
 import { buildSiteMetadata } from "@/sanity/lib/metadata"
 
 const loraHeading = Lora({ subsets: ["latin"], variable: "--font-heading" })
@@ -29,6 +32,8 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-theme-color-light={siteThemeColors.light.theme}
+      data-theme-color-dark={siteThemeColors.dark.theme}
       className={cn(
         "antialiased",
         fontMono.variable,
@@ -38,17 +43,15 @@ export default function RootLayout({
       )}
     >
       <body className="overflow-x-clip">
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var d=document.documentElement;var f=localStorage.getItem("preferences:font-size");if(f==="small"||f==="large")d.setAttribute("data-font-size",f);var c=localStorage.getItem("preferences:high-contrast");if(c===null?window.matchMedia("(prefers-contrast: more)").matches:c==="true")d.setAttribute("data-high-contrast","");var m=localStorage.getItem("preferences:reduce-motion");if(m===null?window.matchMedia("(prefers-reduced-motion: reduce)").matches:m==="true")d.setAttribute("data-reduce-motion","")}catch(e){}})()`,
-          }}
-        />
+        <Suspense fallback={null}>
+          <PreferencesBootstrap />
+        </Suspense>
         <ThemeProvider>
           <PreferencesProvider>
             <TooltipProvider>{children}</TooltipProvider>
           </PreferencesProvider>
         </ThemeProvider>
-        <Analytics />
+        {process.env.VERCEL_ANALYTICS_ID ? <Analytics /> : null}
       </body>
     </html>
   )

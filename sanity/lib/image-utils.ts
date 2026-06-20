@@ -22,7 +22,12 @@ export function getImageUrl(
   height = 630
 ) {
   if (!source) return FALLBACK_IMAGE
-  return urlFor(source).width(width).height(height).url()
+  return urlFor(source)
+    .width(width)
+    .height(height)
+    .auto("format")
+    .quality(80)
+    .url()
 }
 
 export function getImageSrcSet(

@@ -2,6 +2,7 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 import { IconExternalLink } from "@tabler/icons-react"
 import type { PortableTextBlock } from "next-sanity"
+import { Suspense } from "react"
 
 import { BackButton } from "@/components/main/back-button"
 import { JsonLd } from "@/components/json-ld"
@@ -46,7 +47,9 @@ export async function WorkProjectArticle({ slug }: { slug: string }) {
 
   return (
     <article className="container max-w-3xl pb-12 pt-12 md:pb-24 md:pt-24">
-      <JsonLd data={buildProjectJsonLd(project, settings, resume)} />
+      <Suspense fallback={null}>
+        <JsonLd data={buildProjectJsonLd(project, settings, resume)} />
+      </Suspense>
       <BackButton fallbackHref="/works" />
 
       <h1 className="text-3xl font-bold md:text-4xl">{project.title}</h1>
@@ -70,6 +73,7 @@ export async function WorkProjectArticle({ slug }: { slug: string }) {
           alt={project.title}
           fill
           priority
+          fetchPriority="high"
           loading="eager"
           sizes="(max-width: 768px) 100vw, 768px"
           className="object-cover"

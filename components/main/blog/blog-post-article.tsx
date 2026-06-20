@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import type { PortableTextBlock } from "next-sanity"
+import { Suspense } from "react"
 
 import { BackButton } from "@/components/main/back-button"
 import { JsonLd } from "@/components/json-ld"
@@ -43,7 +44,9 @@ export async function BlogPostArticle({ slug }: { slug: string }) {
 
   return (
     <article className="container max-w-3xl pb-12 pt-12 md:pb-24 md:pt-24">
-      <JsonLd data={buildPostJsonLd(post, settings, resume)} />
+      <Suspense fallback={null}>
+        <JsonLd data={buildPostJsonLd(post, settings, resume)} />
+      </Suspense>
       <BackButton fallbackHref="/blog" />
 
       <div className="flex items-center gap-2 text-sm">
@@ -71,6 +74,7 @@ export async function BlogPostArticle({ slug }: { slug: string }) {
           fill
           loading="eager"
           priority
+          fetchPriority="high"
           sizes="(max-width: 768px) 100vw, 768px"
           className="object-cover"
           {...(blurDataURL ? { placeholder: "blur" as const, blurDataURL } : {})}

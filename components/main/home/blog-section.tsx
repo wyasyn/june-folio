@@ -17,7 +17,9 @@ export default function BlogSection({
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{title}</h2>
         <Button asChild variant="link">
-          <Link href="/blog">View All</Link>
+          <Link href="/blog" aria-label="View all blog posts">
+            View All
+          </Link>
         </Button>
       </div>
 

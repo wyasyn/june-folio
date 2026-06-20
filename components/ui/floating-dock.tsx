@@ -102,6 +102,7 @@ const FloatingDockMobile = ({
                 {item.href ? (
                   <Link
                     href={item.href}
+                    aria-label={item.title}
                     className={cn(
                       "flex h-10 w-10 items-center justify-center rounded-full border backdrop-blur-md",
                       isActiveRoute(pathname, item.href)
@@ -140,7 +141,10 @@ const FloatingDockMobile = ({
         )}
       </AnimatePresence>
       <button
+        type="button"
         onClick={() => setOpen(!open)}
+        aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+        aria-expanded={open}
         className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card/60 backdrop-blur-md"
       >
         <IconLayoutNavbarCollapse className="h-5 w-5 text-muted-foreground" />
@@ -286,7 +290,9 @@ function IconContainer({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Link href={href!}>{dockIcon}</Link>
+        <Link href={href!} aria-label={title}>
+          {dockIcon}
+        </Link>
       </TooltipTrigger>
       <TooltipContent side="top" sideOffset={8} className={tooltipAnimation}>
         {title}
