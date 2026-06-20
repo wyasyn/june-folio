@@ -1,10 +1,7 @@
-export function buildContentSecurityPolicy(
-  nonce: string,
-  isDev: boolean,
-): string {
+export function buildContentSecurityPolicy(isDev: boolean): string {
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https://cdn.sanity.io",
     "font-src 'self'",
@@ -21,6 +18,10 @@ export function buildContentSecurityPolicy(
 }
 
 export const staticSecurityHeaders = [
+  {
+    key: "Content-Security-Policy",
+    value: buildContentSecurityPolicy(process.env.NODE_ENV === "development"),
+  },
   {
     key: "X-Content-Type-Options",
     value: "nosniff",

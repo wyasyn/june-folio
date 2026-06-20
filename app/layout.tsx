@@ -1,8 +1,6 @@
 import type { Metadata } from "next"
 import { Geist_Mono, Inter, Lora } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
-import { Suspense } from "react"
-
 import "./globals.css"
 import { PreferencesBootstrap } from "@/components/preferences-bootstrap"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -43,9 +41,7 @@ export default function RootLayout({
       )}
     >
       <body className="overflow-x-clip">
-        <Suspense fallback={null}>
-          <PreferencesBootstrap />
-        </Suspense>
+        <PreferencesBootstrap />
         <ThemeProvider>
           <PreferencesProvider>
             <TooltipProvider>{children}</TooltipProvider>
