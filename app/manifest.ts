@@ -5,7 +5,6 @@ import { getSiteSettings } from "@/sanity/lib/metadata"
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const settings = await getSiteSettings()
-  const siteUrl = settings?.siteUrl?.trim()
 
   const siteName =
     settings?.siteName?.trim() ||
@@ -17,10 +16,9 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     "Portfolio of a software engineer building fast, scalable web and mobile applications."
   const startUrl = "/"
   const scope = "/"
-  const appId = siteUrl ? `${siteUrl.replace(/\/$/, "")}/` : startUrl
 
   return {
-    id: appId,
+    id: startUrl,
     name: siteName,
     short_name: shortName,
     description,
@@ -38,25 +36,15 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     icons: [
       {
         src: "/icon.png",
-        sizes: "512x512",
+        sizes: "32x32",
         type: "image/png",
         purpose: "any",
-      },
-      {
-        src: "/icon.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "maskable",
       },
       {
         src: "/apple-icon.png",
         sizes: "180x180",
         type: "image/png",
-      },
-      {
-        src: "/favicon.ico",
-        sizes: "any",
-        type: "image/x-icon",
+        purpose: "any",
       },
     ],
   }

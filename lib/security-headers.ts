@@ -1,12 +1,12 @@
 export function buildContentSecurityPolicy(isDev: boolean): string {
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'unsafe-inline' https://vercel.live${isDev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https://cdn.sanity.io",
     "font-src 'self'",
-    "connect-src 'self' https://*.sanity.io https://*.apicdn.sanity.io https://vitals.vercel-insights.com https://va.vercel-scripts.com",
-    "frame-src 'none'",
+    "connect-src 'self' https://*.sanity.io https://*.apicdn.sanity.io https://vitals.vercel-insights.com https://va.vercel-scripts.com https://vercel.live",
+    "frame-src https://vercel.live",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
